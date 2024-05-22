@@ -1,5 +1,8 @@
 import app from "./app";
+import config from "./config/index";
 
-app.listen('7000', ()=> {
-    console.log("7000번으로 실행됨")
+const { PORT } = config
+
+app.listen(PORT, ()=> {
+    console.log(`Server started on Port ${PORT}`)
 })

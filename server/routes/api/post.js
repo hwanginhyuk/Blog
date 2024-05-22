@@ -2,6 +2,7 @@ import express from "express";
 
 // Model
 import Post from '../../models/post'
+import auth from "../../middleware/auth";
 
 const router = express.Router();
 
@@ -13,7 +14,8 @@ router.get('/', async(req, res)=> {
     res.json(postFindResult)
 })
 
-router.post('/', async(req, res, next) => {
+// 글쓰기에서 권한이 있는 사람만 글쓰기기능을 쓰도록 auth 미들웨어를 가져다쓴다
+router.post('/', auth, async(req, res, next) => {
     try{
         console.log(req, "req")
         // 구조분해할당
