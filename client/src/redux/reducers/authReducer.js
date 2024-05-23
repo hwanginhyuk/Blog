@@ -1,7 +1,7 @@
-import { CLEAR_ERROR_REQUEST, CLEAR_ERROR_FAILURE, CLEAR_ERROR_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE } from "../types"
+import { CLEAR_ERROR_REQUEST, CLEAR_ERROR_FAILURE, CLEAR_ERROR_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE, USER_LOADING_REQUEST, USER_LOADING_SUCCESS, USER_LOADING_FAILURE } from "../types"
 
-// store에서 만든 initialSate와 동일한 명칭으로 사용하여 빈값인 초기값에 데이터를 넣는다
-const initialSate = {
+// store에서 만든 initialState와 동일한 명칭으로 사용하여 빈값인 초기값에 데이터를 넣는다
+const initialState = {
     token: localStorage.getItem('token'),
     isAuthenticated: null,
     isLoading: false,
@@ -14,7 +14,7 @@ const initialSate = {
 } 
 
 // ... 얕은 복사를 하는 이유는 새로만든 것과 기존의 것과 비교하여 바뀐 것만 렌더링 해주기 위함이다.
-const authReducer = (state = initialSate, action) => {
+const authReducer = (state = initialState, action) => {
     switch(action.type){
         case LOGOUT_REQUEST:
         case LOGIN_REQUEST:
@@ -49,7 +49,7 @@ const authReducer = (state = initialSate, action) => {
                 errorMsg: action.payload.data.msg
                 }
         case LOGOUT_SUCCESS:
-            localStorage.setItem("token", action.payload.token)
+            localStorage.removeItem("token")
             return {
                 ...state,
                 ...action.payload,
@@ -59,21 +59,36 @@ const authReducer = (state = initialSate, action) => {
                 userRole: action.payload.user.role,
                 errorMsg: "",
             }
-        case CLEAR_ERROR_REQUEST:
+            case CLEAR_ERROR_REQUEST:
+            case CLEAR_ERROR_SUCCESS:
+            case CLEAR_ERROR_FAILURE:
+                return {
+                    ...state,
+                    errorMsg: null,
+                };
+        case USER_LOADING_REQUEST:
             return {
                 ...state,
-                errorMsg: null,
+                isLoading: true,
             }
-        case CLEAR_ERROR_SUCCESS:
+        case USER_LOADING_SUCCESS:
             return {
                 ...state,
-                errorMsg: null,
+                isAuthenticated: true,
+                isLoading: false,
+                user: action.payload,
+                userId: action.payload._id,
+                userName: action.payload.name,
+                userRole: action.payload.role
             }
-        case CLEAR_ERROR_FAILURE:
+        case USER_LOADING_FAILURE:
             return {
                 ...state,
-                errorMsg: null,
-            }
+                user: null,
+                isAuthenticated: false,
+                isLoading: false,
+                userRole: ""
+            }            
         default:
             return state
     }

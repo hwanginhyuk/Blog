@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { takeEvery, call, put, fork, all } from 'redux-saga/effects'
-import { LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_FAILURE, LOGOUT_REQUEST, LOGOUT_SUCCESS } from '../types'
+import { LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_FAILURE, LOGOUT_REQUEST, LOGOUT_SUCCESS, USER_LOADING_FAILURE, USER_LOADING_REQUEST, USER_LOADING_SUCCESS } from '../types'
 
 // Login
 const loginUserAPI = (loginData) => {
@@ -51,8 +51,41 @@ function* watchLogout(){
     yield takeEvery(LOGOUT_REQUEST, logout)
 }
 
+// User Loading
+const userLoadingAPI = (token) => {
+    const config = {
+        header: {
+            "Content-Type": "application/json"
+        }
+    }
+    if(token){
+        config.headers["x-auth-token"] = token
+    }
+    return axios.post("api/auth/user", config)
+}
+
+function* userLoading(action){
+    try {
+        const result = yield call(userLoadingAPI, action.payload)
+        console.log(result)
+        yield put({
+            type: USER_LOADING_SUCCESS,
+            payload: result.data
+        })
+    } catch (e) {
+        yield put({
+            type: USER_LOADING_FAILURE,
+            payload: e.response
+        })
+    }
+}
+
+function* watchUserLoading(){
+    yield takeEvery(USER_LOADING_REQUEST, userLoading)
+}
+
 export default function* authSaga(){
     yield all([
-        fork(watchLoginUser), fork(watchLogout)
+        fork(watchLoginUser), fork(watchLogout), fork(watchUserLoading)
     ])
 }
