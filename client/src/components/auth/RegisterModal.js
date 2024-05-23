@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CLEAR_ERROR_REQUEST, REGISTER_REQUEST } from "../../redux/types";
-import { Alert, Button, Form, FormGroup, Label, Modal, ModalBody, ModalHeader, NavLink } from "reactstrap";
+import { Alert, Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalHeader, NavLink } from "reactstrap";
 
 const RegisterModal = () => {
     const [modal, setModal] = useState(false)
