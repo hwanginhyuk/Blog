@@ -146,6 +146,10 @@ function* watchClearError(){
 
 export default function* authSaga(){
     yield all([
-        fork(watchLoginUser), fork(watchLogout), fork(watchUserLoading), fork(watchRegisterUser), fork(watchClearError)
+        fork(watchLoginUser), 
+        fork(watchLogout), 
+        fork(watchUserLoading), 
+        fork(watchRegisterUser), 
+        fork(watchClearError)
     ])
 }

@@ -55,11 +55,12 @@ const authReducer = (state = initialState, action) => {
             localStorage.removeItem("token")
             return {
                 ...state,
-                ...action.payload,
-                isAuthenticated: true,
+                token: null,
+                user: null,
+                userId: null,
+                isAuthenticated: false,
                 isLoading: false,
-                userId: action.payload.user.id,
-                userRole: action.payload.user.role,
+                userRole: null,
                 errorMsg: "",
             }
             case CLEAR_ERROR_REQUEST:
