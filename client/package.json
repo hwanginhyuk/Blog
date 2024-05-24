@@ -14,7 +14,7 @@
     "@ckeditor/ckeditor5-editor-classic": "^41.4.2",
     "@ckeditor/ckeditor5-essentials": "^41.4.2",
     "@ckeditor/ckeditor5-paragraph": "^41.4.2",
-    "@ckeditor/ckeditor5-react": "^7.0.0",
+    "@ckeditor/ckeditor5-react": "^41.4.2",
     "@ckeditor/ckeditor5-theme-lark": "^41.4.2",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
