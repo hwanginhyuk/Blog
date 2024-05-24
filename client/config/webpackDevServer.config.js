@@ -112,7 +112,7 @@ module.exports = function (proxy, allowedHost) {
         require(paths.proxySetup)(devServer.app);
       }
     },
-    onAfterSetupMiddleware(devServer) {
+    setupMiddlewares(devServer) {
       // Redirect to `PUBLIC_URL` or `homepage` from `package.json` if url not match
       devServer.app.use(redirectServedPath(paths.publicUrlOrPath));
 
