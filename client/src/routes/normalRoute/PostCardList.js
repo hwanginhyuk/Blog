@@ -1,8 +1,27 @@
-import React from "react";
+import React, { Fragment, useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux'
+import { POST_LOADING_REQUEST } from "../../redux/types";
+import { Helmet } from 'react-helmet'
+import { Row } from 'reactstrap'
+import { GrowingSpinner } from "../../components/spinner/Spinner";
+import PostCardOne from "../../components/post/PostCardOne";
 
 const PostCardList = () => {
+    const {posts} = useSelector((state) => state.post)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch({
+            type: POST_LOADING_REQUEST
+        })
+    },[dispatch])
     return (
-        <h1>PostCardList</h1>
+        <Fragment>
+            <Helmet title="Home" />
+            <Row>
+                {posts ? <PostCardOne/> : <GrowingSpinner/>}
+            </Row>
+        </Fragment>
     )
 }
 

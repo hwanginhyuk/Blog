@@ -102,7 +102,7 @@ const userLoadingAPI = (token) => {
         }
     }
     if(token){
-        config.headers["x-auth-token"] = token
+        config.header["x-auth-token"] = token
     }
     return axios.post("api/auth/user", config)
 }

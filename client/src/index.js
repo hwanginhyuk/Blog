@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import loadUser from './components/auth/loadUser';
+// reactstrap 사용하기위해 index.js에 추가
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // 맨 앞에서 유저의 토큰을 확인한다면 useEffect로 하는거 보다 살짝더 빠르다
 loadUser()
