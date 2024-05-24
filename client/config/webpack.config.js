@@ -469,33 +469,33 @@ module.exports = function (webpackEnv) {
             {
               test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
               use: [ 'raw-loader' ]
-          },
-          {
+            },
+            {
               test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
               use: [
-                  {
-                      loader: 'style-loader',
-                      options: {
-                          injectType: 'singletonStyleTag',
-                          attributes: {
-                              'data-cke': true
-                          }
-                      }
-                  },
-                  'css-loader',
-                  {
-                      loader: 'postcss-loader',
-                      options: {
-                          postcssOptions: styles.getPostCssConfig( {
-                              themeImporter: {
-                                  themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
-                              },
-                              minify: true
-                          } )
-                      }
+                {
+                  loader: 'style-loader',
+                  options: {
+                    injectType: 'singletonStyleTag',
+                    attributes: {
+                      'data-cke': true
+                    }
                   }
+                },
+                'css-loader',
+                {
+                  loader: 'postcss-loader',
+                  options: {
+                    postcssOptions: {
+                      plugins: [
+                        require('autoprefixer') // 이 예제에서는 autoprefixer를 사용하여 CSS를 자동으로 수정합니다.
+                      ],
+                      // 기타 postcss 옵션을 여기에 추가할 수 있습니다.
+                    }
+                  }
+                }
               ]
-          },
+            },            
             // "postcss" loader applies autoprefixer to our CSS.
             // "css" loader resolves paths in CSS and adds assets as dependencies.
             // "style" loader turns CSS into JS modules that inject <style> tags.
