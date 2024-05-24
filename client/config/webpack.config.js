@@ -467,6 +467,8 @@ module.exports = function (webpackEnv) {
             },
             // CKEditor5 Setting
             module.exports = {
+              // 배포할 때에는 "production" master 브랜치에만 적용하면 된다
+              mode: "development",
               // https://webpack.js.org/configuration/entry-context/
               entry: './app.js',
           
