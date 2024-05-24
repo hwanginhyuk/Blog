@@ -28,11 +28,6 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
 
-// CKEditor5 Setting
-const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
-const CKEditorWebpackPlugin = require('@ckeditor/ckeditor5-dev-webpack-plugin');
-
-
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 
@@ -59,6 +54,10 @@ const disableESLintPlugin = process.env.DISABLE_ESLINT_PLUGIN === 'true';
 const imageInlineSizeLimit = parseInt(
   process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
 );
+
+// CKEditor5 Setting
+const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
+const CKEditorWebpackPlugin = require('@ckeditor/ckeditor5-dev-webpack-plugin');
 
 // Check if TypeScript is setup
 const useTypeScript = fs.existsSync(paths.appTsConfig);
@@ -341,7 +340,6 @@ module.exports = function (webpackEnv) {
         ]),
       ],
     },
-    
     module: {
       strictExportPresence: true,
       rules: [
@@ -467,37 +465,42 @@ module.exports = function (webpackEnv) {
                 inputSourceMap: shouldUseSourceMap,
               },
             },
+
             // CKEditor5 Setting
             {
               test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+
               use: [ 'raw-loader' ]
             },
             {
               test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
+
               use: [
-                {
-                  loader: 'style-loader',
-                  options: {
-                    injectType: 'singletonStyleTag',
-                    attributes: {
-                      'data-cke': true
-                    }
-                  }
-                },
-                'css-loader',
-                {
-                  loader: 'postcss-loader',
-                  options: {
-                    postcssOptions: {
-                      plugins: [
-                        require('autoprefixer') // 이 예제에서는 autoprefixer를 사용하여 CSS를 자동으로 수정합니다.
-                      ],
-                      // 기타 postcss 옵션을 여기에 추가할 수 있습니다.
-                    }
-                  }
-                }
-              ]
-            },            
+                  {
+                      loader: 'style-loader',
+                      options: {
+                          injectType: 'singletonStyleTag',
+                          attributes: {
+                              'data-cke': true
+                          },
+                      },
+                  },
+                  'css-loader',
+                  {
+                      loader: 'postcss-loader',
+                      options: {
+                          postcssOptions: styles.getPostCssConfig( {
+                              themeImporter: {
+                                  themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
+                              },
+                              minify: true
+                          },
+                        ),
+                      },
+                  },
+                ],
+              },
+
             // "postcss" loader applies autoprefixer to our CSS.
             // "css" loader resolves paths in CSS and adds assets as dependencies.
             // "style" loader turns CSS into JS modules that inject <style> tags.
@@ -507,11 +510,11 @@ module.exports = function (webpackEnv) {
             // By default we support CSS Modules with the extension .module.css
             {
               test: cssRegex,
-              // CKEditor Setting
+              // CKEditor5 Setting
               exclude: [
                 cssModuleRegex,
                 /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
-            ],
+              ],
               use: getStyleLoaders({
                 importLoaders: 1,
                 sourceMap: isEnvProduction
@@ -531,10 +534,8 @@ module.exports = function (webpackEnv) {
             // using the extension .module.css
             {
               test: cssModuleRegex,
-              // CKEditor Setting
-              exclude: [
-                /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
-            ],
+              // CKEditor5 Setting
+              exclude: [/ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/],
               use: getStyleLoaders({
                 importLoaders: 1,
                 sourceMap: isEnvProduction
@@ -593,25 +594,22 @@ module.exports = function (webpackEnv) {
             // In production, they would get copied to the `build` folder.
             // This loader doesn't use a "test" so it will catch all modules
             // that fall through the other loaders.
-
-            // CKEditor Setting
             {
-              loader: require.resolve( 'file-loader' ),
-              options: {
-                  // Exclude `js` files to keep the "css" loader working as it injects
-                  // its runtime that would otherwise be processed through the "file" loader.
-                  // Also exclude `html` and `json` extensions so they get processed
-                  // by webpack's internal loaders.
-                  exclude: [
-                      /\.(js|mjs|jsx|ts|tsx)$/,
-                      /\.html$/,
-                      /\.json$/,
-                      /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
-                      /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/
-                  ],
-                  name: 'static/media/[name].[hash:8].[ext]',
-              }
-          },
+              loader: require.resolve("file-loader"),
+              // Exclude `js` files to keep "css" loader working as it injects
+              // its runtime that would otherwise be processed through "file" loader.
+              // Also exclude `html` and `json` extensions so they get processed
+              // by webpacks internal loaders.
+              // CKEditor5 Setting
+              exclude: [
+                /\.(js|mjs|jsx|ts|tsx)$/,
+                /\.html$/,
+                /\.json$/,
+                /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+                /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
+              ],
+              type: 'asset/resource',
+            },
             // ** STOP ** Are you adding a new loader?
             // Make sure to add the new loader(s) before the "file" loader.
           ],
