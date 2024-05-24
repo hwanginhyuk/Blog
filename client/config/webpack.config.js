@@ -29,7 +29,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
 
 // CKEditor5 Setting
-
+const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -339,6 +339,7 @@ module.exports = function (webpackEnv) {
         ]),
       ],
     },
+    
     module: {
       strictExportPresence: true,
       rules: [
@@ -464,6 +465,60 @@ module.exports = function (webpackEnv) {
                 inputSourceMap: shouldUseSourceMap,
               },
             },
+            // CKEditor5 Setting
+            module.exports = {
+              // https://webpack.js.org/configuration/entry-context/
+              entry: './app.js',
+          
+              // https://webpack.js.org/configuration/output/
+              output: {
+                  path: path.resolve( __dirname, 'dist' ),
+                  filename: 'bundle.js'
+              },
+          
+              module: {
+                  rules: [
+                      {
+                          test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+          
+                          use: [ 'raw-loader' ]
+                      },
+                      {
+                          test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
+          
+                          use: [
+                              {
+                                  loader: 'style-loader',
+                                  options: {
+                                      injectType: 'singletonStyleTag',
+                                      attributes: {
+                                          'data-cke': true
+                                      }
+                                  }
+                              },
+                              'css-loader',
+                              {
+                                  loader: 'postcss-loader',
+                                  options: {
+                                      postcssOptions: styles.getPostCssConfig( {
+                                          themeImporter: {
+                                              themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
+                                          },
+                                          minify: true
+                                      } )
+                                  }
+                              }
+                          ]
+                      }
+                  ]
+              },
+          
+              // Useful for debugging.
+              devtool: 'source-map',
+          
+              // By default webpack logs warnings if the bundle is bigger than 200kb.
+              performance: { hints: false }
+          },
             // "postcss" loader applies autoprefixer to our CSS.
             // "css" loader resolves paths in CSS and adds assets as dependencies.
             // "style" loader turns CSS into JS modules that inject <style> tags.
