@@ -30,7 +30,6 @@ const createEnvironmentHash = require('./webpack/persistentCache/createEnvironme
 
 // CKEditor5 Setting
 const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
-const CKEditorWebpackPlugin = require('@ckeditor/ckeditor5-dev-webpack-plugin');
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -510,7 +509,20 @@ module.exports = function (webpackEnv) {
                                   }
                               }
                           ]
-                      }
+                      },
+                      {
+                        test: /\.(js|jsx)$/,
+                        exclude: /node_modules/,
+                        use: {
+                            loader: 'babel-loader',
+                            options: {
+                                presets: [
+                                    '@babel/preset-env', // JavaScript 문법 변환
+                                    '@babel/preset-react' // React JSX 문법 변환
+                                ]
+                            }
+                        }
+                    },
                   ]
               },
           
