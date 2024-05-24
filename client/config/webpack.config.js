@@ -466,73 +466,35 @@ module.exports = function (webpackEnv) {
               },
             },
             // CKEditor5 Setting
-            module.exports = {
-              // 배포할 때에는 "production" master 브랜치에만 적용하면 된다
-              mode: "development",
-              // https://webpack.js.org/configuration/entry-context/
-              entry: './app.js',
-          
-              // https://webpack.js.org/configuration/output/
-              output: {
-                  path: path.resolve( __dirname, 'dist' ),
-                  filename: 'bundle.js'
-              },
-          
-              module: {
-                  rules: [
-                      {
-                          test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
-          
-                          use: [ 'raw-loader' ]
-                      },
-                      {
-                          test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
-          
-                          use: [
-                              {
-                                  loader: 'style-loader',
-                                  options: {
-                                      injectType: 'singletonStyleTag',
-                                      attributes: {
-                                          'data-cke': true
-                                      }
-                                  }
+            {
+              test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+              use: [ 'raw-loader' ]
+          },
+          {
+              test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
+              use: [
+                  {
+                      loader: 'style-loader',
+                      options: {
+                          injectType: 'singletonStyleTag',
+                          attributes: {
+                              'data-cke': true
+                          }
+                      }
+                  },
+                  'css-loader',
+                  {
+                      loader: 'postcss-loader',
+                      options: {
+                          postcssOptions: styles.getPostCssConfig( {
+                              themeImporter: {
+                                  themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
                               },
-                              'css-loader',
-                              {
-                                  loader: 'postcss-loader',
-                                  options: {
-                                      postcssOptions: styles.getPostCssConfig( {
-                                          themeImporter: {
-                                              themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
-                                          },
-                                          minify: true
-                                      } )
-                                  }
-                              }
-                          ]
-                      },
-                      {
-                        test: /\.(js|jsx)$/,
-                        exclude: /node_modules/,
-                        use: {
-                            loader: 'babel-loader',
-                            options: {
-                                presets: [
-                                    '@babel/preset-env', // JavaScript 문법 변환
-                                    '@babel/preset-react' // React JSX 문법 변환
-                                ]
-                            }
-                        }
-                    },
-                  ]
-              },
-          
-              // Useful for debugging.
-              devtool: 'source-map',
-          
-              // By default webpack logs warnings if the bundle is bigger than 200kb.
-              performance: { hints: false }
+                              minify: true
+                          } )
+                      }
+                  }
+              ]
           },
             // "postcss" loader applies autoprefixer to our CSS.
             // "css" loader resolves paths in CSS and adds assets as dependencies.
@@ -547,7 +509,7 @@ module.exports = function (webpackEnv) {
               exclude: [
                 cssModuleRegex,
                 /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
-              ],
+            ],
               use: getStyleLoaders({
                 importLoaders: 1,
                 sourceMap: isEnvProduction
@@ -568,9 +530,9 @@ module.exports = function (webpackEnv) {
             {
               test: cssModuleRegex,
               // CKEditor Setting
-              exclude:[
+              exclude: [
                 /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
-              ],
+            ],
               use: getStyleLoaders({
                 importLoaders: 1,
                 sourceMap: isEnvProduction
@@ -629,23 +591,25 @@ module.exports = function (webpackEnv) {
             // In production, they would get copied to the `build` folder.
             // This loader doesn't use a "test" so it will catch all modules
             // that fall through the other loaders.
-            {
-              loader: require.resolve('file-loader'),
-              // Exclude `js` files to keep "css" loader working as it injects
-              // its runtime that would otherwise be processed through "file" loader.
-              // Also exclude `html` and `json` extensions so they get processed
-              // by webpacks internal loaders.
 
-              // CKEditor Setting
-              exclude: [
-                /\.(js|mjs|jsx|ts|tsx)$/,
-                /\.html$/,
-                /\.json$/,
-                /ckeditor5-[^/\\]+[/\\]theme[/\\]icon[/\\][^/\\]+\.svg$/,
-                /ckeditor5-[^/\\]+[/\\]theme[/\\].+\css$/
-              ],
-              type: 'asset/resource',
-            },
+            // CKEditor Setting
+            {
+              loader: require.resolve( 'file-loader' ),
+              options: {
+                  // Exclude `js` files to keep the "css" loader working as it injects
+                  // its runtime that would otherwise be processed through the "file" loader.
+                  // Also exclude `html` and `json` extensions so they get processed
+                  // by webpack's internal loaders.
+                  exclude: [
+                      /\.(js|mjs|jsx|ts|tsx)$/,
+                      /\.html$/,
+                      /\.json$/,
+                      /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+                      /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/
+                  ],
+                  name: 'static/media/[name].[hash:8].[ext]',
+              }
+          }
             // ** STOP ** Are you adding a new loader?
             // Make sure to add the new loader(s) before the "file" loader.
           ],
