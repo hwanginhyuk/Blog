@@ -10,6 +10,7 @@
     "@ckeditor/ckeditor5-basic-styles": "^41.4.2",
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
     "@ckeditor/ckeditor5-dev-utils": "^40.1.0",
+    "@ckeditor/ckeditor5-dev-webpack-plugin": "^31.1.13",
     "@ckeditor/ckeditor5-editor-classic": "^41.4.2",
     "@ckeditor/ckeditor5-essentials": "^41.4.2",
     "@ckeditor/ckeditor5-paragraph": "^41.4.2",
